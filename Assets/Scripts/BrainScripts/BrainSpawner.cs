@@ -37,7 +37,7 @@ public class BrainSpawner : OriginSpawner<Brain>
         Brain brain = base.SpawnAt(position);
 
         if(brain != null)
-            brain.SetScanner(_scanner);
+            _scanner.RegisterBrain(brain);
 
         return brain;
     }

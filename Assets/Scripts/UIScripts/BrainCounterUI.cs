@@ -4,23 +4,23 @@ using UnityEngine.UI;
 
 public class BrainCounterUI : MonoBehaviour
 {
-    [SerializeField] private BrainScanner _scanner;
+    [SerializeField] private BrainStorage _storage;
     [SerializeField] private TMP_Text _countText;
     [SerializeField] private Image _icon;
 
     private void OnEnable()
     {
-        if (_scanner != null)
+        if (_storage != null)
         {
-            _scanner.OnBrainDelivered += HandleDelivered;
-            HandleDelivered(_scanner.DeliveredCount);
+            _storage.OnDeliveredChanged += HandleDelivered;
+            HandleDelivered(_storage.DeliveredCount);
         }
     }
 
     private void OnDisable()
     {
-        if (_scanner != null)
-            _scanner.OnBrainDelivered -= HandleDelivered;
+        if (_storage != null)
+            _storage.OnDeliveredChanged -= HandleDelivered;
     }
 
     private void HandleDelivered(int count)

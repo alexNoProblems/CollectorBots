@@ -5,13 +5,16 @@ using UnityEngine;
 public class Brain : MonoBehaviour, IPoolable<Brain>
 {
     private Collider _collider;
-    private BrainScanner _scanner;
 
-    private Action<Brain> _release;
+    public event Action<Brain> Appeared;
+    public event Action<Brain> PickedUp;
+    public event Action<Brain> Delivered;
+    public event Action<Brain> Despawned;
+    public event Action<Brain> Released;
 
     public void Init(Action<Brain> releaseToPool)
     {
-        _release = releaseToPool;
+        Released = releaseToPool;
 
         if (_collider == null)
             _collider = GetComponent<Collider>();
@@ -19,25 +22,17 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
 
     private void OnEnable()
     {
-        _scanner?.RegisterBrain(this);
+        Appeared?.Invoke(this);
     }
 
     private void OnDisable()
     {
-        _scanner?.UnRegisterBrain(this);
+        Despawned?.Invoke(this);
     }
     
     public void Despawn()
     {
-        _release?.Invoke(this);
-    }
-
-    public void SetScanner(BrainScanner scanner)
-    {
-        _scanner = scanner;
-
-        if (isActiveAndEnabled)
-            _scanner.RegisterBrain(this);
+        Released?.Invoke(this);
     }
 
     public void OnPickUp(Transform carryAnchor)
@@ -48,10 +43,14 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
         transform.SetParent(carryAnchor, true);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
+
+        PickedUp?.Invoke(this);
     }
 
     public void OnDelivered()
     {
+        Delivered?.Invoke(this);
+
         Despawn();
     }
 }

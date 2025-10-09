@@ -24,7 +24,7 @@ public abstract class OriginSpawner<T>: MonoBehaviour, ISpawner<T> where T: Comp
 
         var position = GetSpawnPosition();
 
-        if (_isGrounded && TryGround(ref position))
+        if (_isGrounded && TryGetGroundPosition(ref position))
             return SpawnAt(position);
 
         position.y = _base.position.y;
@@ -49,7 +49,7 @@ public abstract class OriginSpawner<T>: MonoBehaviour, ISpawner<T> where T: Comp
         return item;
     }
 
-    protected bool TryGround(ref Vector3 position)
+    protected bool TryGetGroundPosition(ref Vector3 position)
     {
         Vector3 from = new Vector3(position.x, _raycastHeight, position.z);
         float rayLength = _raycastHeight * RaycastLengthMultiplier;

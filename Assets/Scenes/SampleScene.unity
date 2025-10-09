@@ -1014,6 +1014,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3762798803969349480}
     - target: {fileID: 2789932938509710270, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: _storage
+      value: 
+      objectReference: {fileID: 4306512521882487289, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+    - target: {fileID: 2789932938509710270, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: _countText
       value: 
       objectReference: {fileID: 1390881493}

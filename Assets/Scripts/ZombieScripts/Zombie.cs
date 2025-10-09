@@ -6,10 +6,10 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 {
     private enum State { Idle, ToBrain, CarryToBase}
 
+    [SerializeField] private BrainStorage _storage;
     [SerializeField] private Transform _model;
     [SerializeField] private Transform _carryAnchor;
 
-    private Action<Zombie> _release;
     private BrainScanner _scanner;
     private Transform _base;
     private ZombieMover _mover;
@@ -23,6 +23,8 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     public bool IsAvailable => _state == State.Idle && _carriedBrain == null;
     public Vector3 TargetPosition => _target != null ? _target.position : transform.position;
     private bool IsPickingUp => _pickUpper != null && _pickUpper.IsPickingUp;
+
+    public event Action<Zombie> Released;
 
     private void Awake()
     {
@@ -61,7 +63,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 
     public void Init(Action<Zombie> releaseToPool)
     {
-        _release = releaseToPool;
+        Released += releaseToPool;
         _pickUpper.BindCarryAnchor(_carryAnchor);
     }
 
@@ -72,7 +74,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 
     public void Despawn()
     {
-        _release?.Invoke(this);
+        Released?.Invoke(this);
     }
 
     public void SetScanner(BrainScanner scanner)
@@ -141,7 +143,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     private void HandlePickUpDone(Brain pickedBrain)
     {
         _carriedBrain = pickedBrain;
-        _scanner?.UnRegisterBrain(_carriedBrain);
         _pickUpper.AttachToCarry(_carriedBrain);
     }
 
@@ -163,8 +164,11 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         if (_carriedBrain != null)
         {
             _carriedBrain.OnDelivered();
+
+            if (_storage != null)
+                _storage.AddBrain(_carriedBrain);
+            
             _carriedBrain = null;
-            _scanner?.NotifyBrainDelivered();
 
             ClearTarget();
             _scanner?.NotifyZombieAvailable(this);

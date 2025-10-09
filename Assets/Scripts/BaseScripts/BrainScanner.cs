@@ -15,7 +15,14 @@ public class BrainScanner : MonoBehaviour
 
     public void RegisterBrain(Brain brain)
     {
+        if (brain == null)
+            return;
+            
         _brains.Register(brain);
+
+        brain.PickedUp += HandleBrainPickedUp;
+        brain.Despawned += HandleBrainGone;
+        brain.Delivered += HandleBrainDelivered;
 
         Zombie freeZombie = _zombies.FindAnyFreeZombie();
 
@@ -25,8 +32,14 @@ public class BrainScanner : MonoBehaviour
 
     public void UnRegisterBrain(Brain brain)
     {
-       if (brain != null && _brains != null)
-            _brains.Unregister(brain);
+       if (brain == null)
+            return;
+        
+        brain.PickedUp -= HandleBrainPickedUp;
+        brain.Despawned -= HandleBrainGone;
+        brain.Delivered -= HandleBrainDelivered;
+
+        _brains.Unregister(brain);
     } 
 
     public void RegisterZombie(Zombie zombie)
@@ -61,12 +74,6 @@ public class BrainScanner : MonoBehaviour
             Assign(zombie, nextBrain);
     }
 
-    public void NotifyBrainDelivered()
-    {
-        _deliverCount++;
-        OnBrainDelivered?.Invoke(_deliverCount);
-    }
-
     private void Assign(Zombie zombie, Brain brain)
     {
        if (zombie == null || brain == null)
@@ -78,5 +85,21 @@ public class BrainScanner : MonoBehaviour
         zombie.SetBase(_baseTransform);
         zombie.SetTarget(brain.transform);
         _zombies.MarkBusyZombie(zombie);
+    }
+
+    private void HandleBrainPickedUp(Brain brain)
+    {
+        _brains.Unregister(brain);
+    }
+
+    private void HandleBrainGone(Brain brain)
+    {
+        _brains.Unregister(brain);
+    }
+
+    private void HandleBrainDelivered(Brain brain)
+    {
+        _deliverCount++;
+        OnBrainDelivered?.Invoke(_deliverCount);
     }
 }
