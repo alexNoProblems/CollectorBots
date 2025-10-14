@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class BrainSpawner : OriginSpawner<Brain>
 {
-    [SerializeField] private BrainScanner _scanner;
     [SerializeField] private float _minDistance = 3f;
     [SerializeField] private float _maxDistance = 10f;
     [SerializeField] private float _spawnInterval = 15f;
@@ -11,6 +10,7 @@ public class BrainSpawner : OriginSpawner<Brain>
 
     private Coroutine _spawnRoutine;
     private WaitForSeconds _waitForSeconds;
+    private BrainDispatcher _brains;
 
     private void Awake()
     {
@@ -24,6 +24,9 @@ public class BrainSpawner : OriginSpawner<Brain>
 
     private IEnumerator SpawnLoop()
     {
+        while (_brains == null)
+            yield return null;
+
         while (enabled)
         {
             Spawn();
@@ -32,12 +35,17 @@ public class BrainSpawner : OriginSpawner<Brain>
         }
     }
 
+    public void Init(BrainDispatcher brains)
+    {
+        _brains = brains;
+    }
+
     public override Brain SpawnAt(Vector3 position)
     {
         Brain brain = base.SpawnAt(position);
 
         if(brain != null)
-            _scanner.RegisterBrain(brain);
+            _brains.Register(brain);
 
         return brain;
     }

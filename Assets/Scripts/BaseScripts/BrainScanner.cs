@@ -1,105 +1,45 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BrainScanner : MonoBehaviour
 {
-    [SerializeField] private Transform _baseTransform;
-    [SerializeField] private BrainDispatcher _brains;
-    [SerializeField] private ZombieDispatcher _zombies;
+    [SerializeField] private float _radius = 20f;
+    [SerializeField] private Transform _center;
 
-    private int _deliverCount;
+    private readonly HashSet<Brain> _foundedBrain = new();
 
-    public int DeliveredCount => _deliverCount;
-   
-    public event Action<int> OnBrainDelivered;
+    private BrainDispatcher _brains;
 
-    public void RegisterBrain(Brain brain)
+    public BrainDispatcher Dispatcher => _brains;
+
+    public event Action Scanned;
+
+    private void Awake()
     {
-        if (brain == null)
-            return;
-            
-        _brains.Register(brain);
-
-        brain.PickedUp += HandleBrainPickedUp;
-        brain.Despawned += HandleBrainGone;
-        brain.Delivered += HandleBrainDelivered;
-
-        Zombie freeZombie = _zombies.FindAnyFreeZombie();
-
-        if (freeZombie != null)
-            Assign(freeZombie, brain);
+        if (_center == null)
+            _center = transform;
     }
 
-    public void UnRegisterBrain(Brain brain)
+    public void Init(BrainDispatcher brains)
     {
-       if (brain == null)
-            return;
-        
-        brain.PickedUp -= HandleBrainPickedUp;
-        brain.Despawned -= HandleBrainGone;
-        brain.Delivered -= HandleBrainDelivered;
-
-        _brains.Unregister(brain);
-    } 
-
-    public void RegisterZombie(Zombie zombie)
-    {
-        _zombies.Register(zombie);
-
-        if (_zombies.IsBusy(zombie))
-            return;
-
-        Brain freeBrain = _brains.FindFirstFreeBrain();
-
-        if (freeBrain != null)
-            Assign(zombie, freeBrain);
+        _brains = brains;
     }
 
-    public void UnRegisterZombie(Zombie zombie)
+    public void Scan()
     {
-        _brains.UnclaimBrainByZombie(zombie);
-        _zombies.Unregister(zombie);
-    }
+        Collider[] hits = Physics.OverlapSphere(_center.position, _radius);
 
-    public void NotifyZombieAvailable(Zombie zombie)
-    {
-        if (zombie == null || !zombie.IsAvailable)
-            return;
+        float radiusSqr = _radius * _radius;
 
-        _zombies.MarkFreeZombie(zombie);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i].TryGetComponent(out Brain brain) && brain.isActiveAndEnabled)
+                _foundedBrain.Add(brain);
+        }
 
-        Brain nextBrain = _brains.FindFirstFreeBrain();
+        _foundedBrain.RemoveWhere(brain => brain == null || (brain.transform.position - _center.position).sqrMagnitude > radiusSqr);
 
-        if (nextBrain != null)
-            Assign(zombie, nextBrain);
-    }
-
-    private void Assign(Zombie zombie, Brain brain)
-    {
-       if (zombie == null || brain == null)
-            return;
-        
-        if (!_brains.TryClaim(brain, zombie))
-            return;
-
-        zombie.SetBase(_baseTransform);
-        zombie.SetTarget(brain.transform);
-        _zombies.MarkBusyZombie(zombie);
-    }
-
-    private void HandleBrainPickedUp(Brain brain)
-    {
-        _brains.Unregister(brain);
-    }
-
-    private void HandleBrainGone(Brain brain)
-    {
-        _brains.Unregister(brain);
-    }
-
-    private void HandleBrainDelivered(Brain brain)
-    {
-        _deliverCount++;
-        OnBrainDelivered?.Invoke(_deliverCount);
+        Scanned?.Invoke();
     }
 }

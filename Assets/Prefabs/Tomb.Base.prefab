@@ -4161,7 +4161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1648977806831670250}
   - component: {fileID: -7516869331430757713}
-  - component: {fileID: 4306512521882487289}
+  - component: {fileID: -1308058026028339725}
   m_Layer: 0
   m_Name: Tomb.Base
   m_TagString: Untagged
@@ -4292,12 +4292,14 @@ MonoBehaviour:
   _isGrounded: 0
   _raycastHeight: 200
   _startCount: 0
+  _dispatcher: {fileID: 0}
+  _storage: {fileID: 0}
   _scanner: {fileID: 0}
   _minRadius: 5
   _maxRadius: 20
   _minSpawnDistance: 2
   _maxSpawnTries: 10
---- !u!114 &4306512521882487289
+--- !u!114 &-1308058026028339725
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4306,9 +4308,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5515242866147555209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8a050b3d958b4848b2c3d731c9c2a80, type: 3}
+  m_Script: {fileID: 11500000, guid: 25d4597f666664b6a878e920ca681221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _baseTransform: {fileID: 0}
 --- !u!1 &5863211331499085660
 GameObject:
   m_ObjectHideFlags: 0

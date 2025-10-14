@@ -12,20 +12,19 @@ public class BrainCounterUI : MonoBehaviour
     {
         if (_storage != null)
         {
-            _storage.OnDeliveredChanged += HandleDelivered;
-            HandleDelivered(_storage.DeliveredCount);
+            _storage.OnDeliveredChanged += OnChanged;
+            OnChanged(_storage.DeliveredCount);
         }
     }
 
     private void OnDisable()
     {
         if (_storage != null)
-            _storage.OnDeliveredChanged -= HandleDelivered;
+            _storage.OnDeliveredChanged -= OnChanged;
     }
 
-    private void HandleDelivered(int count)
+    private void OnChanged(int count)
     {
-        if (_countText != null)
-            _countText.text = count.ToString();
+        _countText.text = count.ToString();
     }
 }

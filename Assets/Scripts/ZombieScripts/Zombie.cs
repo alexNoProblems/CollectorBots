@@ -7,6 +7,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     private enum State { Idle, ToBrain, CarryToBase}
 
     [SerializeField] private BrainStorage _storage;
+    [SerializeField] private ZombieDispatcher _zombies;
     [SerializeField] private Transform _model;
     [SerializeField] private Transform _carryAnchor;
 
@@ -50,12 +51,14 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _mover.OnArrived += HandleArrived;
         _pickUpper.OnPickedUpCompleted += HandlePickUpDone;
 
-        _scanner?.RegisterZombie(this);
+        if (_zombies != null)
+            _zombies.Register(this);
     }
 
     private void OnDisable()
     {
-        _scanner?.UnRegisterZombie(this);
+        if (_zombies != null)
+            _zombies.Unregister(this);
 
         _mover.OnArrived -= HandleArrived;
         _pickUpper.OnPickedUpCompleted -= HandlePickUpDone;
@@ -64,7 +67,20 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     public void Init(Action<Zombie> releaseToPool)
     {
         Released += releaseToPool;
+        
         _pickUpper.BindCarryAnchor(_carryAnchor);
+        _carriedBrain = null;
+        ClearTarget();
+
+        _zombies?.MarkFreeZombie(this);
+        _scanner?.Dispatcher.UnclaimBrainByZombie(this);
+    }
+
+    public void MakeDependencies(ZombieDispatcher dispatcher, BrainStorage storage, Transform basePosition)
+    {
+        _zombies = dispatcher;
+        _storage = storage;
+        _base = basePosition;
     }
 
     public void SpawnTo(Vector3 worldPosition)
@@ -80,9 +96,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     public void SetScanner(BrainScanner scanner)
     {
         _scanner = scanner;
-
-        if (isActiveAndEnabled)
-            _scanner.RegisterZombie(this);
     }
 
     public void SetBase(Transform baseTransform)
@@ -171,7 +184,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
             _carriedBrain = null;
 
             ClearTarget();
-            _scanner?.NotifyZombieAvailable(this);
+            _zombies.MarkFreeZombie(this);
         }
     }
 
