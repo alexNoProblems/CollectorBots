@@ -15,7 +15,7 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogColor: {r: 0.5551875, g: 0.2951673, b: 0.6320754, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
@@ -2032,6 +2032,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 20
   _center: {fileID: 3762798803969349476}
+  _fogPrefab: {fileID: 1796471199757745048, guid: 4eda87423c6d34775a24522f439b4a08, type: 3}
+  _fogDuration: 2
 --- !u!136 &3762798803969349482
 CapsuleCollider:
   m_ObjectHideFlags: 0

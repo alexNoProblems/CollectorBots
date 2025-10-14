@@ -6,6 +6,8 @@ public class BrainScanner : MonoBehaviour
 {
     [SerializeField] private float _radius = 20f;
     [SerializeField] private Transform _center;
+    [SerializeField] private Fog _fogPrefab;
+    [SerializeField] private float _fogDuration;
 
     private readonly HashSet<Brain> _foundedBrain = new();
 
@@ -39,6 +41,12 @@ public class BrainScanner : MonoBehaviour
         }
 
         _foundedBrain.RemoveWhere(brain => brain == null || (brain.transform.position - _center.position).sqrMagnitude > radiusSqr);
+
+        if (_fogPrefab != null)
+        {
+            var fog = Instantiate(_fogPrefab, _center.position, Quaternion.identity);
+            fog.Play(_radius, _fogDuration);
+        }
 
         Scanned?.Invoke();
     }
