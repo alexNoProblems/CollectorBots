@@ -6,7 +6,7 @@ public abstract class OriginSpawner<T>: MonoBehaviour, ISpawner<T> where T: Comp
     private const float RaycastLengthMultiplier = 2f;
     private const int AllLayersMask = ~0;
 
-    [SerializeField] protected PrefabsHandler<T> Pool;
+    [SerializeField] protected PrefabPool<T> Pool;
     [SerializeField] protected Transform Base;
     [SerializeField] protected bool IsGrounded = false;
     [SerializeField] protected float RaycastHeight = 200f;

@@ -12,16 +12,17 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
     public event Action<Brain> Despawned;
     public event Action<Brain> Released;
 
-    public void Init(Action<Brain> releaseToPool)
+    public void Init()
     {
-        Released = releaseToPool;
-
         if (_collider == null)
             _collider = GetComponent<Collider>();
+        
+        transform.localScale = Vector3.one;
     }
 
     private void OnEnable()
     {
+        transform.localScale = Vector3.one;
         Appeared?.Invoke(this);
     }
 
@@ -35,7 +36,7 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
         Released?.Invoke(this);
     }
 
-    public void OnPickUp(Transform carryAnchor)
+    public void AttachToZombie(Transform carryAnchor)
     {
         if (_collider != null)
             _collider.enabled = false;

@@ -15,9 +15,9 @@ public class ZombiePickUpper : MonoBehaviour
     private bool _isPickingUp;
     private Brain _pendingBrain;
 
-    public bool IsPickingUp => _isPickingUp;
-
     public event Action<Brain> PickedUpCompleted;
+
+    public bool IsPickingUp => _isPickingUp;
 
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class ZombiePickUpper : MonoBehaviour
         if (brain == null || _carryAnchor == null)
             return;
 
-        brain.OnPickUp(_carryAnchor);
+        brain.AttachToZombie(_carryAnchor);
     }
 
     public void OnPickUpAnimationEnd()

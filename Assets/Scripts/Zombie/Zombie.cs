@@ -19,19 +19,21 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     private Transform _target;
     private Brain _carriedBrain;
     private ZombieAnimator _animator;
+    private Vector3 _initialScale;
+
+    public event Action<Zombie> Released;
 
     public bool HasTarget => _target != null;
     public bool IsAvailable => _state == State.Idle && _carriedBrain == null;
     public Vector3 TargetPosition => _target != null ? _target.position : transform.position;
     private bool IsPickingUp => _pickUpper != null && _pickUpper.IsPickingUp;
 
-    public event Action<Zombie> Released;
-
     private void Awake()
     {
         _mover = GetComponent<ZombieMover>();
         _pickUpper = GetComponent<ZombiePickUpper>();
         _animator = GetComponent<ZombieAnimator>();
+        _initialScale = transform.localScale;
 
         if (_model == null)
             _model = transform;
@@ -64,10 +66,8 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _pickUpper.PickedUpCompleted -= HandlePickUpDone;
     }
 
-    public void Init(Action<Zombie> releaseToPool)
+    public void Init()
     {
-        Released += releaseToPool;
-        
         _pickUpper.BindCarryAnchor(_carryAnchor);
         _carriedBrain = null;
         ClearTarget();

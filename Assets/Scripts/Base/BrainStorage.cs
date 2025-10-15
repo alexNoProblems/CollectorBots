@@ -5,9 +5,9 @@ public class BrainStorage : MonoBehaviour
 {
     private int _delivered;
 
-    public int DeliveredCount => _delivered;
+    public event Action<int> BrainsDeliveredChanged;
 
-    public event Action<int> DeliveredChanged;
+    public int DeliveredCount => _delivered;
 
     public void AddBrain(Brain brain)
     {
@@ -15,6 +15,6 @@ public class BrainStorage : MonoBehaviour
             return;
 
         _delivered++;
-        DeliveredChanged?.Invoke(_delivered);
+        BrainsDeliveredChanged?.Invoke(_delivered);
     }
 }

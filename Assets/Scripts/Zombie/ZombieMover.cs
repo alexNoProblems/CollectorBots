@@ -18,6 +18,8 @@ public class ZombieMover : MonoBehaviour
     private Vector3? _destinationOverride;
     private bool _isPaused;
 
+    public event Action Arrived;
+
     public bool IsMoving 
     {
         get
@@ -30,8 +32,6 @@ public class ZombieMover : MonoBehaviour
             return speedSqr > _moveThreshold;
         }
     }
-
-    public event Action Arrived;
 
     private void Awake()
     {

@@ -3,5 +3,6 @@ using UnityEngine;
 
 public interface IPoolable<T> where T : Component
 {
-    void Init(Action<T> releaseToPool);
+    event Action<T> Released;
+    void Init();
 }

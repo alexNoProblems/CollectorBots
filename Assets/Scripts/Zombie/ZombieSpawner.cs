@@ -40,7 +40,7 @@ public class ZombieSpawner : OriginSpawner<Zombie>
         zombieTransform.position = position;
 
         zombie.MakeDependencies(_dispatcher, _storage, Base);
-        zombie.Init(ReleaseToPool);
+        zombie.Init();
         zombie.SetScanner(_scanner);
         zombie.SpawnTo(position);
 
