@@ -12,7 +12,7 @@ public class BrainCounterUI : MonoBehaviour
     {
         if (_storage != null)
         {
-            _storage.OnDeliveredChanged += OnChanged;
+            _storage.DeliveredChanged += OnChanged;
             OnChanged(_storage.DeliveredCount);
         }
     }
@@ -20,7 +20,7 @@ public class BrainCounterUI : MonoBehaviour
     private void OnDisable()
     {
         if (_storage != null)
-            _storage.OnDeliveredChanged -= OnChanged;
+            _storage.DeliveredChanged -= OnChanged;
     }
 
     private void OnChanged(int count)

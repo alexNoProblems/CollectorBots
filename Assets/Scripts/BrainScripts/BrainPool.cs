@@ -1,3 +1,3 @@
 using UnityEngine;
 
-public class BrainPool :ResourcesPool<Brain> { }
+public class BrainPool :PrefabsHandler<Brain> { }

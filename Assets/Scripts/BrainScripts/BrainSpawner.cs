@@ -10,7 +10,6 @@ public class BrainSpawner : OriginSpawner<Brain>
 
     private Coroutine _spawnRoutine;
     private WaitForSeconds _waitForSeconds;
-    private BrainDispatcher _brains;
 
     private void Awake()
     {
@@ -19,14 +18,12 @@ public class BrainSpawner : OriginSpawner<Brain>
 
     protected override void Start()
     {
+        base.Start();
         _spawnRoutine = StartCoroutine(SpawnLoop());
     }
 
     private IEnumerator SpawnLoop()
     {
-        while (_brains == null)
-            yield return null;
-
         while (enabled)
         {
             Spawn();
@@ -35,29 +32,14 @@ public class BrainSpawner : OriginSpawner<Brain>
         }
     }
 
-    public void Init(BrainDispatcher brains)
-    {
-        _brains = brains;
-    }
-
-    public override Brain SpawnAt(Vector3 position)
-    {
-        Brain brain = base.SpawnAt(position);
-
-        if(brain != null)
-            _brains.Register(brain);
-
-        return brain;
-    }
-
     protected override Vector3 GetSpawnPosition()
     {
         Vector3 spawnPosition;
 
         if (_minDistance > 0)
-            spawnPosition = SpawnUtils.RandomPointInAnnulusXZ(_base.position, _minDistance, _maxDistance);
+            spawnPosition = SpawnUtils.RandomPointInAnnulusXZ(Base.position, _minDistance, _maxDistance);
         else
-            spawnPosition = SpawnUtils.RandomPointInCircleXZ(_base.position, _maxDistance);
+            spawnPosition = SpawnUtils.RandomPointInCircleXZ(Base.position, _maxDistance);
 
         spawnPosition.y += _spawnHeightOffset;
 

@@ -86,7 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f96b5764e1c04507a99e00fb88d0f67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _storage: {fileID: 4306512521882487289, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+  _storage: {fileID: 0}
+  _zombies: {fileID: 0}
   _model: {fileID: 2972851727163923119}
   _carryAnchor: {fileID: 7251219771253481032}
 --- !u!95 &1143731393898803748

@@ -31,7 +31,7 @@ public class ZombieMover : MonoBehaviour
         }
     }
 
-    public event Action OnArrived;
+    public event Action Arrived;
 
     private void Awake()
     {
@@ -66,7 +66,7 @@ public class ZombieMover : MonoBehaviour
         _navMeshAgent.SetDestination(destination);
 
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance + _arrivalBuffer)
-            OnArrived?.Invoke();
+            Arrived?.Invoke();
     }
 
     private void ConfigureNavMeshAgent()

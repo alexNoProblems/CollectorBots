@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourcesPool<T>: MonoBehaviour, IObjectPool<T> where T :Component, IPoolable<T> 
+public class PrefabsHandler<T>: MonoBehaviour, IObjectPool<T> where T :Component, IPoolable<T> 
 {
     [SerializeField] private T _prefab;
     [SerializeField] private int _initializeSize = 20;
     [SerializeField] Transform _poolContainer;
-    [SerializeField] private bool _expendable = true;
+    [SerializeField] private bool _expandable = true;
 
     private readonly Queue<T> _pool = new();
 
@@ -24,14 +24,13 @@ public class ResourcesPool<T>: MonoBehaviour, IObjectPool<T> where T :Component,
             _poolContainer = transform;
 
         InitializePool(_initializeSize);
-
     }
  
     public T Get()
     {
         if (_pool.Count == 0)
         {
-            if ((!_expendable))
+            if ((!_expandable))
                 return null;
 
             _pool.Enqueue(CreatePoolObject());

@@ -1470,6 +1470,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -7516869331430757713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: Base
+      value: 
+      objectReference: {fileID: 3762798803969349476}
+    - target: {fileID: -7516869331430757713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: Pool
+      value: 
+      objectReference: {fileID: 197373602}
+    - target: {fileID: -7516869331430757713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: _base
       value: 
       objectReference: {fileID: 3762798803969349476}
@@ -1485,6 +1493,10 @@ PrefabInstance:
       propertyPath: _storage
       value: 
       objectReference: {fileID: 1985505700}
+    - target: {fileID: -7516869331430757713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: StartCount
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: -7516869331430757713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: _maxRadius
       value: 5
@@ -2009,11 +2021,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 417989885d6244821a6af21c3fe125f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pool: {fileID: 773607586}
-  _base: {fileID: 3762798803969349476}
-  _isGrounded: 0
-  _raycastHeight: 200
-  _startCount: 0
+  Pool: {fileID: 773607586}
+  Base: {fileID: 3762798803969349476}
+  IsGrounded: 0
+  RaycastHeight: 200
+  StartCount: 0
   _minDistance: 3
   _maxDistance: 10
   _spawnInterval: 15

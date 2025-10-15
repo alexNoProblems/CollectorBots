@@ -17,7 +17,7 @@ public class ZombiePickUpper : MonoBehaviour
 
     public bool IsPickingUp => _isPickingUp;
 
-    public event Action<Brain> OnPickedUpCompleted;
+    public event Action<Brain> PickedUpCompleted;
 
     private void Awake()
     {
@@ -88,6 +88,6 @@ public class ZombiePickUpper : MonoBehaviour
         Brain brain = _pendingBrain;
         _pendingBrain = null;
 
-        OnPickedUpCompleted?.Invoke(brain);
+        PickedUpCompleted?.Invoke(brain);
     }
 }

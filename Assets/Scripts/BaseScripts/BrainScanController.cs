@@ -16,33 +16,47 @@ public class BrainScanController : MonoBehaviour
     {
         if (_scanner != null)
             _scanner.Init(_brains);
-        
-        if (_brainSpawner != null)
-            _brainSpawner.Init(_brains);
-        
+    
         if (_zombieSpawner != null)
             _zombieSpawner.Init(_zombies, _scanner);
     }
 
     private void OnEnable()
     {
+        if (_brainSpawner != null)
+            _brainSpawner.Spawned += OnBrainSpawned;
+        
         if (_scanner != null)
             _scanner.Scanned += OnScanned;
     }
 
     private void OnDisable()
     {
+        if (_brainSpawner != null)
+            _brainSpawner.Spawned -= OnBrainSpawned;
+
         if (_scanner != null)
             _scanner.Scanned -= OnScanned;
     }
 
+    private void OnBrainSpawned(Brain brain)
+    {
+        if (brain == null || _brains == null)
+            return;
+
+        _brains.Register(brain);
+    }
+
     private void OnScanned()
+    {
+        TryPair();
+    }
+
+    private void TryPair()
     {
         if (_brains == null || _zombies == null)
             return;
-
-        int paired = 0;
-
+        
         while (enabled)
         {
             Brain brain = _brains.FindFirstFreeBrain();
@@ -55,7 +69,6 @@ public class BrainScanController : MonoBehaviour
             {
                 _zombies.MarkBusyZombie(zombie);
                 zombie.SetTarget(brain.transform);
-                paired++;
             }
         }
     }

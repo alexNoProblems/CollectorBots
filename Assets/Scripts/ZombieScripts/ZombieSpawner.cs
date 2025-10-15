@@ -21,10 +21,10 @@ public class ZombieSpawner : OriginSpawner<Zombie>
 
     public override Zombie SpawnAt(Vector3 position)
     {
-        if (_pool == null)
+        if (Pool == null)
             return null;
 
-        Zombie zombie = _pool.Get();
+        Zombie zombie = Pool.Get();
 
         if (zombie == null)
             return null;
@@ -39,7 +39,7 @@ public class ZombieSpawner : OriginSpawner<Zombie>
         zombieTransform.SetParent(null, true);
         zombieTransform.position = position;
 
-        zombie.MakeDependencies(_dispatcher, _storage, _base);
+        zombie.MakeDependencies(_dispatcher, _storage, Base);
         zombie.Init(ReleaseToPool);
         zombie.SetScanner(_scanner);
         zombie.SpawnTo(position);
@@ -52,15 +52,15 @@ public class ZombieSpawner : OriginSpawner<Zombie>
     {
         for (int i = 0; i < _maxSpawnTries; i++)
         {
-            var position = SpawnUtils.RandomPointInAnnulusXZ(_base.position, _minRadius, _maxRadius);
-            position.y = _base.position.y;
+            var position = SpawnUtils.RandomPointInAnnulusXZ(Base.position, _minRadius, _maxRadius);
+            position.y = Base.position.y;
 
             if (IsFreeFromOtherZombie(position, _minSpawnDistance))
                 return position;
         }
 
-         var fallback = SpawnUtils.RandomPointInAnnulusXZ(_base.position, _minRadius, _maxRadius);
-            fallback.y = _base.position.y;
+         var fallback = SpawnUtils.RandomPointInAnnulusXZ(Base.position, _minRadius, _maxRadius);
+            fallback.y = Base.position.y;
 
         return fallback;
     }
@@ -81,6 +81,6 @@ public class ZombieSpawner : OriginSpawner<Zombie>
     private void ReleaseToPool(Zombie zombie)
     {
         zombie.gameObject.SetActive(false);
-        _pool.Release(zombie);
+        Pool.Release(zombie);
     }
 }

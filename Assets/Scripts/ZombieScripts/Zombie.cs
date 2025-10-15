@@ -48,8 +48,8 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 
     private void OnEnable()
     {
-        _mover.OnArrived += HandleArrived;
-        _pickUpper.OnPickedUpCompleted += HandlePickUpDone;
+        _mover.Arrived += HandleArrived;
+        _pickUpper.PickedUpCompleted += HandlePickUpDone;
 
         if (_zombies != null)
             _zombies.Register(this);
@@ -60,8 +60,8 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         if (_zombies != null)
             _zombies.Unregister(this);
 
-        _mover.OnArrived -= HandleArrived;
-        _pickUpper.OnPickedUpCompleted -= HandlePickUpDone;
+        _mover.Arrived -= HandleArrived;
+        _pickUpper.PickedUpCompleted -= HandlePickUpDone;
     }
 
     public void Init(Action<Zombie> releaseToPool)
