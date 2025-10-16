@@ -19,7 +19,7 @@ public class BrainScanner : MonoBehaviour
     private WaitForSeconds _waitForSeconds;
     private bool _isScanningNow;
 
-    public event Action Scanned;
+    public event Action<float, Vector3> Scanned;
 
     public BrainDispatcher Dispatcher => _brains;
 
@@ -73,13 +73,7 @@ public class BrainScanner : MonoBehaviour
 
         Physics.OverlapSphere(_center.position, _radius, _scanMask, _triggerInteraction);
 
-        if (_fogPrefab != null)
-        {
-            var fog = Instantiate(_fogPrefab, _center.position, Quaternion.identity);
-            fog.Play(_radius, _fogDuration);
-        }
-
-        Scanned?.Invoke();
+        Scanned?.Invoke(_radius, _center.position);
 
         _isScanningNow = false;
     }

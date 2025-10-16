@@ -47,7 +47,7 @@ public class BrainScanController : MonoBehaviour
         _brains.Register(brain);
     }
 
-    private void OnScanned()
+    private void OnScanned(float _radius, Vector3 position)
     {
         TryPair();
     }
