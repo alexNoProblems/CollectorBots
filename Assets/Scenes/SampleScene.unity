@@ -1308,6 +1308,14 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: 4383603035353941349, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: _storage
+      value: 
+      objectReference: {fileID: 1985505700}
+    - target: {fileID: 4383603035353941349, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: _zombieSpawner
+      value: 
+      objectReference: {fileID: 3762798803969349484}
     - target: {fileID: 4565747713249450920, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -1436,6 +1444,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: 7420732018790613621, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7427641903482918557, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -1447,6 +1459,10 @@ PrefabInstance:
     - target: {fileID: 7545221424777002396, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558478140639675550, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7589499552866145613, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1495,6 +1511,10 @@ PrefabInstance:
     - target: {fileID: 8522462758712707337, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8620940779781537053, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8637680898497898197, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
       propertyPath: m_StaticEditorFlags

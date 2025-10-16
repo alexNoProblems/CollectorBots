@@ -17,4 +17,13 @@ public class BrainStorage : MonoBehaviour
         _delivered++;
         BrainsDeliveredChanged?.Invoke(_delivered);
     }
+
+    public void ResetCount()
+    {
+        if (_delivered != 0)
+        {
+            _delivered = 0;
+            BrainsDeliveredChanged?.Invoke(_delivered);
+        }
+    }
 }
