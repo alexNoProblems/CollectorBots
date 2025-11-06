@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class FlagPlacer : MonoBehaviour
     private Base _originBase;
 
     public bool IsPlacing { get; private set; }
+
+    public event Action<Base, Vector3> FlagPlaced;
 
     public void BeginPlacement(Base originBase)
     {
@@ -62,6 +65,9 @@ public class FlagPlacer : MonoBehaviour
         {
             var flag = Instantiate(_flagPrefab, worldPosition, rotation);
             _placedFlags[_originBase] = flag;
+            _originBase.SetStateSentUnit();
+
+            FlagPlaced?.Invoke(_originBase, worldPosition);
         }
         
         Cancel();

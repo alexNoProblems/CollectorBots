@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(ZombieMover), typeof(ZombiePickUpper))] 
 public class Zombie : MonoBehaviour, IPoolable<Zombie>
 {
-    private enum State { Idle, ToBrain, CarryToBase}
+    private enum State { Idle, ToBrain, CarryToBase, ToBuild}
 
     [SerializeField] private BrainStorage _storage;
     [SerializeField] private ZombieDispatcher _zombies;
@@ -20,6 +20,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     private Brain _carriedBrain;
     private ZombieAnimator _animator;
     private Vector3 _initialScale;
+    private Action<Zombie> _onBuildArrivedCallback;
 
     public event Action<Zombie> Released;
 
@@ -121,6 +122,27 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
             GoToBase();
         else
             _mover.ResumeMovement();
+    }
+
+    public void GoToConstructionNewBase(Vector3 targetPosition, Action<Zombie> onArrived)
+    {
+        _scanner?.Dispatcher.UnclaimBrainByZombie(this);
+        ClearTarget();
+        _carriedBrain = null;
+        SetIdle();
+
+        _onBuildArrivedCallback = onArrived;
+        _state = State.ToBuild;
+
+        _mover.ResumeMovement();
+        _mover.GoToPosition(targetPosition);
+    }
+
+    private void SetIdle()
+    {
+        _state = State.Idle;
+        _target = null;
+        _mover.ClearDestination();
     }
 
     private void HandleArrived()

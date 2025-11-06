@@ -661,6 +661,8 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194230}
   - component: {fileID: 963194231}
+  - component: {fileID: 963194233}
+  - component: {fileID: 963194232}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   m_Layer: 0
@@ -773,7 +775,7 @@ MonoBehaviour:
   m_DefaultControlScheme: 
   m_DefaultActionMap: Camera
   m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 963194227}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,15 +808,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 249591f9c0a604e8581670edd5bbba9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 963194227}
+  _inputReader: {fileID: 963194232}
+  _clicker: {fileID: 963194233}
   _flagPlacer: {fileID: 814101574}
-  _playerInput: {fileID: 963194229}
-  _maxRayDistance: 2000
+--- !u!114 &963194232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b706e1eb4f304ba4b80ab8c1be4db4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _actionMap: Camera
   _point: MousePosition
   _click: Click
   _cancel: Cancel
   _rotateButton: RotateButton
+--- !u!114 &963194233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96182f7427664cc19c531e3a52f2116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
+  _maxRayDistance: 2000
 --- !u!1 &1251401184
 GameObject:
   m_ObjectHideFlags: 0
