@@ -7,6 +7,7 @@ public class BrainScanController : MonoBehaviour
     [SerializeField] private ZombieDispatcher _zombies;
     [SerializeField] private BrainSpawner _brainSpawner;
     [SerializeField] private ZombieSpawner _zombieSpawner;
+    [SerializeField] private bool _spawnZombiesOnAwake = true;
 
     public BrainScanner Scanner => _scanner;
     public BrainDispatcher Brains => _brains;
@@ -15,10 +16,10 @@ public class BrainScanController : MonoBehaviour
     private void Awake()
     {
         if (_scanner != null)
+        {
             _scanner.Init(_brains);
-    
-        if (_zombieSpawner != null)
-            _zombieSpawner.Init(_zombies, _scanner);
+            _scanner.StartAutoScan();
+        }
     }
 
     private void OnEnable()
@@ -39,6 +40,15 @@ public class BrainScanController : MonoBehaviour
             _scanner.Scanned -= OnScanned;
     }
 
+    public void ForceInitAfterConstruction()
+    {
+        if (_scanner != null)
+        {
+            _scanner.Init(_brains);
+            _scanner.StartAutoScan();
+        }
+    }
+
     private void OnBrainSpawned(Brain brain)
     {
         if (brain == null || _brains == null)
@@ -48,11 +58,6 @@ public class BrainScanController : MonoBehaviour
     }
 
     private void OnScanned(float _radius, Vector3 position)
-    {
-        TryPair();
-    }
-
-    private void TryPair()
     {
         if (_brains == null || _zombies == null)
             return;

@@ -1,10 +1,18 @@
 using UnityEngine;
 
+[RequireComponent(typeof(BrainScanner))]
 public class FogSpawner : MonoBehaviour
 {
-    [SerializeField] private BrainScanner _scanner;
     [SerializeField] private Fog _fogPrefab;
     [SerializeField] private float _fogDuration = 2f;
+
+    private BrainScanner _scanner;
+    
+    private void Awake()
+    {
+        if (_scanner == null)
+            _scanner = GetComponent<BrainScanner>();
+    }
 
     private void OnEnable()
     {

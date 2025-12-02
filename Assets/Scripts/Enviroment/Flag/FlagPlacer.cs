@@ -26,7 +26,9 @@ public class FlagPlacer : MonoBehaviour
         if (_flagPreview == null)
         {
             _flagPreview = Instantiate(_flagPrefab);
-            _previewRenderer = _flagPreview.GetComponentInChildren<Renderer>(true);
+            var view = _flagPreview.GetComponent<FlagView>();
+            _previewRenderer = view != null ? view.Renderer : null;
+            
             SetTransparent(_previewRenderer, _flagAlpha);
         }
 
@@ -83,6 +85,17 @@ public class FlagPlacer : MonoBehaviour
             Destroy(_flagPreview);
             _flagPreview = null;
             _previewRenderer = null;
+        }
+    }
+
+    public void RemoveFlag(Base originBase)
+    {
+        if (_placedFlags.TryGetValue(originBase, out var flag))
+        {
+            if (flag != null)
+                Destroy(flag);
+            
+            _placedFlags.Remove(originBase);
         }
     }
 

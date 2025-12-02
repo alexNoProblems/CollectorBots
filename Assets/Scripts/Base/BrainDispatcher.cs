@@ -14,8 +14,8 @@ public class BrainDispatcher : MonoBehaviour
         if (!_brains.Contains(brain))
             _brains.Add(brain);
 
-        brain.Despawned += OnBrainGone;
-        brain.Delivered += OnBrainGone;
+        brain.Despawned += Unregister;
+        brain.Delivered += Unregister;
     }
 
     public void Unregister(Brain brain)
@@ -26,8 +26,8 @@ public class BrainDispatcher : MonoBehaviour
         _brains.Remove(brain);
         _brainToZombie.Remove(brain);
 
-        brain.Despawned -= OnBrainGone;
-        brain.Delivered -= OnBrainGone;
+        brain.Despawned -= Unregister;
+        brain.Delivered -= Unregister;
     }
 
     public bool IsBrainAssigned(Brain brain) => brain != null && _brainToZombie.ContainsKey(brain);
@@ -75,10 +75,5 @@ public class BrainDispatcher : MonoBehaviour
         }
 
         return null;
-    }
-
-    private void OnBrainGone(Brain brain)
-    {
-        Unregister(brain);
     }
 }

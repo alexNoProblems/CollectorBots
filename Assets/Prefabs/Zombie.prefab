@@ -72,7 +72,7 @@ Transform:
   - {fileID: 4512793651491321433}
   - {fileID: 7251219771253481032}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1186719235628191052
 MonoBehaviour:
@@ -86,10 +86,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f96b5764e1c04507a99e00fb88d0f67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _storage: {fileID: 0}
+  _storage: {fileID: 1887587723002430713, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
   _zombies: {fileID: 0}
   _model: {fileID: 2972851727163923119}
   _carryAnchor: {fileID: 7251219771253481032}
+  _nearestDistance: 1.5
 --- !u!95 &1143731393898803748
 Animator:
   serializedVersion: 5
@@ -182,7 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87887e47ae71a45bc8f0697fe27f6152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 0.2
+  _moveSpeed: 3
   _turnSpeed: 720
   _stoppingDistance: 0.6
   _baseAcceleration: 8

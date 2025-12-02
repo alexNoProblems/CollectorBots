@@ -1,14 +1,18 @@
 using UnityEngine;
 
+[RequireComponent(typeof(ParticleSystem))]
 public class Fog : MonoBehaviour
 {
     [SerializeField] private ParticleSystem _fogEffect;
 
-    public void Play(float radius, float seconds)
+    private void Awake()
     {
         if (_fogEffect == null)
             _fogEffect = GetComponent<ParticleSystem>();
+    }
 
+    public void Play(float radius, float seconds)
+    {
         _fogEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         var shape = _fogEffect.shape;

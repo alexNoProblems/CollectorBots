@@ -1,25 +1,30 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
-[RequireComponent(typeof(ZombieMover), typeof(ZombiePickUpper))] 
+[RequireComponent(typeof(ZombieMover), typeof(ZombiePickUpper), typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Zombie : MonoBehaviour, IPoolable<Zombie>
 {
-    private enum State { Idle, ToBrain, CarryToBase, ToBuild}
+    private enum State { Idle, ToBrain, CarryToBase, ToBuild }
 
-    [SerializeField] private BrainStorage _storage;
-    [SerializeField] private ZombieDispatcher _zombies;
     [SerializeField] private Transform _model;
     [SerializeField] private Transform _carryAnchor;
+    [SerializeField] private float _nearestDistance = 1.5f;
 
+    private BrainStorage _storage;
+    private ZombieDispatcher _zombies;
     private BrainScanner _scanner;
     private Transform _base;
     private ZombieMover _mover;
     private ZombiePickUpper _pickUpper;
+    private ZombieAnimator _animator;
+
     private State _state = State.Idle;
     private Transform _target;
     private Brain _carriedBrain;
-    private ZombieAnimator _animator;
     private Vector3 _initialScale;
+
     private Action<Zombie> _onBuildArrivedCallback;
 
     public event Action<Zombie> Released;
@@ -36,10 +41,10 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _animator = GetComponent<ZombieAnimator>();
         _initialScale = transform.localScale;
 
-        if (_model == null)
+        if (_model == null) 
             _model = transform;
-        
-        if (_carryAnchor == null)
+
+        if (_carryAnchor == null) 
             _carryAnchor = transform;
     }
 
@@ -53,18 +58,25 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     {
         _mover.Arrived += HandleArrived;
         _pickUpper.PickedUpCompleted += HandlePickUpDone;
-
-        if (_zombies != null)
-            _zombies.Register(this);
     }
 
     private void OnDisable()
     {
-        if (_zombies != null)
-            _zombies.Unregister(this);
-
         _mover.Arrived -= HandleArrived;
         _pickUpper.PickedUpCompleted -= HandlePickUpDone;
+
+         _carriedBrain = null;
+        _target = null;
+        _state = State.Idle;
+
+        var navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.ResetPath();
+            navMeshAgent.velocity = Vector3.zero;
+            navMeshAgent.isStopped = true;
+        }
     }
 
     public void Init()
@@ -73,7 +85,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _carriedBrain = null;
         ClearTarget();
 
-        _zombies?.MarkFreeZombie(this);
         _scanner?.Dispatcher.UnclaimBrainByZombie(this);
     }
 
@@ -82,6 +93,15 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _zombies = dispatcher;
         _storage = storage;
         _base = basePosition;
+    }
+
+    public void FinalizeSetup()
+    {
+        if (_zombies == null)
+            return;
+
+        _zombies.Register(this);
+        _zombies.MarkFreeZombie(this);
     }
 
     public void SpawnTo(Vector3 worldPosition)
@@ -106,7 +126,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 
     public void SetTarget(Transform target)
     {
-       if (_state != State.Idle)
+        if (_state != State.Idle)
             return;
 
         _target = target;
@@ -134,6 +154,7 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _onBuildArrivedCallback = onArrived;
         _state = State.ToBuild;
 
+        _zombies?.MarkBusyZombie(this);
         _mover.ResumeMovement();
         _mover.GoToPosition(targetPosition);
     }
@@ -152,14 +173,17 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
             case State.ToBrain:
                 TryStartPickUp();
                 break;
+
             case State.CarryToBase:
                 DeliverBrainToBase();
                 break;
-            default:
+
+            case State.ToBuild:
+                BuildNewBase();
                 break;
         }
     }
-    
+
     private void TryStartPickUp()
     {
         Brain brain = _target ? _target.GetComponent<Brain>() : null;
@@ -167,7 +191,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         if (brain == null)
         {
             ClearTarget();
-
             return;
         }
 
@@ -185,29 +208,33 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     {
         if (_base == null)
             return;
-        
-        var basePoint = NearestBasePointFinder.GetNearestPointAroundBase(transform.position, _base);
+
+        var basePoint = NearestBasePointFinder.GetNearestPointAroundBase(transform.position, _base, _nearestDistance);
+
         _mover.ResumeMovement();
         _mover.GoToPosition(basePoint);
 
         _target = _base;
         _state = State.CarryToBase;
     }
-    
+
     private void DeliverBrainToBase()
     {
-        if (_carriedBrain != null)
-        {
-            _carriedBrain.OnDelivered();
+        if (_carriedBrain == null)
+            return;
 
-            if (_storage != null)
-                _storage.AddBrain(_carriedBrain);
-            
-            _carriedBrain = null;
+        Brain deliveredBrain = _carriedBrain;
+        _carriedBrain = null;
 
-            ClearTarget();
-            _zombies.MarkFreeZombie(this);
-        }
+        ClearTarget();
+        _zombies?.MarkFreeZombie(this);
+
+        BrainStorage storage = _storage;
+
+        deliveredBrain.OnDelivered();
+
+        if (storage != null)
+            storage.AddBrain(deliveredBrain);
     }
 
     private void ClearTarget()
@@ -215,5 +242,14 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _target = null;
         _state = State.Idle;
         _mover.ClearDestination();
+    }
+
+    private void BuildNewBase()
+    {
+        var callback = _onBuildArrivedCallback;
+        _onBuildArrivedCallback = null;
+
+        SetIdle();
+        callback?.Invoke(this);
     }
 }

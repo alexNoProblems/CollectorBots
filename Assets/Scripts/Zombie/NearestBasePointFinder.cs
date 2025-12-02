@@ -5,16 +5,19 @@ public class NearestBasePointFinder
 {
     private const float Radius = 2f;
 
-    public static Vector3 GetNearestPointAroundBase(Vector3 from, Transform baseTransform)
+    public static Vector3 GetNearestPointAroundBase(Vector3 from, Transform baseTransform, float standoffDistance)
     {
         Vector3 position = baseTransform.position;
 
         if (baseTransform.TryGetComponent<Collider>(out var collider))
             position = collider.ClosestPoint(from);
-        
-        if (NavMesh.SamplePosition(position, out var hit, Radius, NavMesh.AllAreas))
+
+        Vector3 direction = (from - position).normalized;
+        Vector3 targetPoint = position + direction * standoffDistance;
+
+        if (NavMesh.SamplePosition(targetPoint, out var hit, Radius, NavMesh.AllAreas))
             return hit.position;
 
-        return position;
+        return targetPoint;
     }
 }

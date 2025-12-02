@@ -17,6 +17,9 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
         if (_collider == null)
             _collider = GetComponent<Collider>();
         
+        if (_collider != null)
+            _collider.enabled = true;
+        
         transform.localScale = Vector3.one;
     }
 

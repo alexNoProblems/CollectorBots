@@ -9,6 +9,20 @@ public class BrainStorage : MonoBehaviour
 
     public int DeliveredCount => _delivered;
 
+    public bool TryClean(int amount)
+    {
+        if (amount <= 0)
+            return true;
+        
+        if (_delivered < amount)
+            return false;
+
+        _delivered -= amount;
+        BrainsDeliveredChanged?.Invoke(_delivered);
+
+        return true;
+    }
+    
     public void AddBrain(Brain brain)
     {
         if (brain == null)

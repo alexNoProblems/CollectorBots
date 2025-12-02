@@ -14,10 +14,9 @@ public abstract class OriginSpawner<T>: MonoBehaviour, ISpawner<T> where T: Comp
 
     public event Action<T> Spawned;
 
-    protected virtual void Start()
+    protected void OnSpawned(T item)
     {
-        for (int i = 0; i < StartCount; i++)
-            Spawn();
+        Spawned?.Invoke(item);
     }
 
     public T Spawn()

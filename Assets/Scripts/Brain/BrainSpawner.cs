@@ -14,12 +14,21 @@ public class BrainSpawner : OriginSpawner<Brain>
     private void Awake()
     {
         _waitForSeconds = new WaitForSeconds(_spawnInterval);
+
+        if(Base == null)
+            Base = transform;
+        
+        Spawned += OnBrainSpawned;
     }
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
         _spawnRoutine = StartCoroutine(SpawnLoop());
+    }
+
+    private void OnDestroy()
+    {
+        Spawned -= OnBrainSpawned;
     }
 
     private IEnumerator SpawnLoop()
@@ -44,5 +53,13 @@ public class BrainSpawner : OriginSpawner<Brain>
         spawnPosition.y += _spawnHeightOffset;
 
         return spawnPosition;
+    }
+
+    private void OnBrainSpawned(Brain brain)
+    {
+        if (brain == null)
+            return;
+        
+        brain.Init();
     }
 }
