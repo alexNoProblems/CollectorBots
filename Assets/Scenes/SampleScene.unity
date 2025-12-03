@@ -895,7 +895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77fd1490e092c416eb773b0c53862a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _basePrefab: {fileID: 5515242866147555209, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
+  _basePrefab: {fileID: 1455720859895216742, guid: 127f66ec8f5d2446eaf0b587b01587d3, type: 3}
   _dustFxPrefab: {fileID: 6458853093790206100, guid: e57a43a06f688484394e053150ef8ecd, type: 3}
   _baseTransform: {fileID: 3762798803969349506}
   _flagPlacer: {fileID: 814101574}

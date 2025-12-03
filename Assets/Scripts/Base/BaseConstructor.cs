@@ -8,7 +8,7 @@ public class BaseConstructor : MonoBehaviour
     private const float RaycastStartHeight = 10f;
     private const float RaycastDistance = 50f;
 
-    [SerializeField] private GameObject _basePrefab;
+    [SerializeField] private BaseRoot _basePrefab;
     [SerializeField] private GameObject _dustFxPrefab;
     [SerializeField] private Transform _baseTransform;
     [SerializeField] private FlagPlacer _flagPlacer;
@@ -31,21 +31,11 @@ public class BaseConstructor : MonoBehaviour
 
         _initialBaseRoot.InjectDependencies(this, _flagPlacer);
 
-        var root = _initialBaseRoot;
-
-        if (root.Spawner != null && root.Dispatcher != null && root.Scanner != null)
-        {
-            if (_zombiePool != null)
-                root.Spawner.SetPool(_zombiePool);
-
-            Transform basePoint = (root.Base != null && root.Base.BasePoint != null) ? root.Base.BasePoint : root.transform;
-
-            root.Spawner.Init(root.Dispatcher, root.Scanner, root.Storage, root.Base, _flagPlacer, basePoint);
-            root.Spawner.SpawnInitial(_initialBaseZombies);
-        }
-
-        if (root.AdditionalSpawner != null)
-            root.AdditionalSpawner.Init(root.Storage, root.Spawner, root.Expansion, root.Dispatcher);
+        _initialBaseRoot.Initialize(
+            constructor: this,
+            flagPlacer: _flagPlacer,
+            zombiePool: _zombiePool,
+            zombiesOnStart: _initialBaseZombies);
     }
 
     public void Init(FlagPlacer flagPlacer)
@@ -76,7 +66,7 @@ public class BaseConstructor : MonoBehaviour
         Vector3 newBasePosition = SnapToGround(buildPosition);
         Quaternion rotation = _baseTransform != null ? _baseTransform.rotation : _basePrefab.transform.rotation;
 
-        GameObject baseObject = Instantiate(_basePrefab, newBasePosition, rotation);
+        BaseRoot baseObject = Instantiate(_basePrefab, newBasePosition, rotation);
 
         var root = baseObject.GetComponent<BaseRoot>();
 
@@ -87,34 +77,12 @@ public class BaseConstructor : MonoBehaviour
             yield break;
         }
 
-        root.InjectDependencies(this, _flagPlacer);
-
-        Base newBase = root.Base;
-        BrainStorage newStorage = root.Storage;
-        ZombieDispatcher newDispatcher = root.Dispatcher;
-        BrainScanner newScanner = root.Scanner;
-        ExpansionHandler newExpansion = root.Expansion;
-        ZombieSpawner newSpawner = root.Spawner;
-        BrainScanController newScanCtrl = root.ScanController;
-
-        if (newSpawner != null && newScanner != null && newDispatcher != null)
-        {
-            if (_zombiePool != null)
-                newSpawner.SetPool(_zombiePool);
-
-            Transform basePoint = (newBase != null && newBase.BasePoint != null) ? newBase.BasePoint : root.transform;
-
-            newSpawner.Init(newDispatcher, newScanner, newStorage, newBase,_flagPlacer, basePoint);
-
-            newSpawner.SpawnInitial(_newBaseZombies);
-        }
-
-        root.AdditionalSpawner?.Init(newStorage, newSpawner, newExpansion,
-        newDispatcher);
-
-        if (newScanCtrl != null)
-            newScanCtrl.ForceInitAfterConstruction();
-
+        root.Initialize(
+            constructor: this,
+            flagPlacer: _flagPlacer,
+            zombiePool: _zombiePool,
+            zombiesOnStart: _newBaseZombies);
+        
         _running = null;
     }
 
@@ -139,11 +107,13 @@ public class BaseConstructor : MonoBehaviour
         Vector3 newBasePosition = SnapToGround(buildPosition);
         Quaternion rotation = _baseTransform != null ? _baseTransform.rotation : _basePrefab.transform.rotation;
         
-        GameObject baseObject = Instantiate(_basePrefab, newBasePosition, rotation);
+        BaseRoot baseObject = Instantiate(_basePrefab, newBasePosition, rotation);
 
-        newBase = baseObject.GetComponent<Base>();
-        newStorage = baseObject.GetComponent<BrainStorage>();
-        baseTransform = baseObject.transform;
+        var root = baseObject.GetComponent<BaseRoot>();
+        
+        newBase = root != null ? root.Base : null;
+        newStorage = root != null ? root.Storage : null;
+        baseTransform = root != null ? root.transform : baseObject.transform;
     }
 
     private Vector3 SnapToGround(Vector3 position)

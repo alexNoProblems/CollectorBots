@@ -10,18 +10,16 @@ public class BrainScanner : MonoBehaviour
     [SerializeField] private LayerMask _scanMask = ~0;
     [SerializeField] private QueryTriggerInteraction _triggerInteraction = QueryTriggerInteraction.Ignore;
     [SerializeField] private float _scanInterval = 6f;
-    [SerializeField] private Fog _fogPrefab;
-    [SerializeField] private float _fogDuration;
     [SerializeField] private bool _isAutoScanEnable = true;
-
-    private BrainDispatcher _brains;
+    
     private Coroutine _loopTime;
     private WaitForSeconds _waitForSeconds;
     private bool _isScanningNow;
 
     public event Action<float, Vector3> Scanned;
+    public event Action<IReadOnlyList<Brain>> BrainsScanned;
 
-    public BrainDispatcher Dispatcher => _brains;
+    private readonly List<Brain> _scanBuffer = new();
 
     private void Awake()
     {
@@ -40,11 +38,6 @@ public class BrainScanner : MonoBehaviour
     private void OnDisable()
     {
         StopAutoScan();
-    }
-
-    public void Init(BrainDispatcher brains)
-    {
-        _brains = brains;
     }
 
     public void StartAutoScan()
@@ -70,10 +63,21 @@ public class BrainScanner : MonoBehaviour
             return;
 
         _isScanningNow = true;
+        _scanBuffer.Clear();
 
-        Physics.OverlapSphere(_center.position, _radius, _scanMask, _triggerInteraction);
+        var colliders = Physics.OverlapSphere(_center.position, _radius, _scanMask, _triggerInteraction);
 
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            var brain = colliders[i].GetComponent<Brain>();
+            if (brain != null)
+                _scanBuffer.Add(brain);
+        }
+        
         Scanned?.Invoke(_radius, _center.position);
+        
+        if (_scanBuffer.Count > 0)
+            BrainsScanned?.Invoke(_scanBuffer);
 
         _isScanningNow = false;
     }

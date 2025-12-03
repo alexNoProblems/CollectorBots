@@ -5,12 +5,30 @@ using UnityEngine;
 public class Brain : MonoBehaviour, IPoolable<Brain>
 {
     private Collider _collider;
+    private bool _isReserved;
 
     public event Action<Brain> Appeared;
     public event Action<Brain> PickedUp;
     public event Action<Brain> Delivered;
     public event Action<Brain> Despawned;
     public event Action<Brain> Released;
+    
+    public bool IsReserved => _isReserved;
+
+    public bool TryReserve()
+    {
+        if (_isReserved)
+            return false;
+        
+        _isReserved = true;
+
+        return true;
+    }
+
+    public void CleanReservation()
+    {
+        _isReserved = false;
+    }
 
     public void Init()
     {
@@ -19,12 +37,18 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
         
         if (_collider != null)
             _collider.enabled = true;
-        
+
+        _isReserved = false;
         transform.localScale = Vector3.one;
     }
 
     private void OnEnable()
     {
+        _isReserved = false;
+
+        if (_collider != null)
+            _collider.enabled = true;
+        
         transform.localScale = Vector3.one;
         Appeared?.Invoke(this);
     }
@@ -32,10 +56,12 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
     private void OnDisable()
     {
         Despawned?.Invoke(this);
+        _isReserved = false;
     }
     
     public void Despawn()
     {
+        _isReserved = false;
         Released?.Invoke(this);
     }
 
@@ -54,7 +80,8 @@ public class Brain : MonoBehaviour, IPoolable<Brain>
     public void OnDelivered()
     {
         Delivered?.Invoke(this);
-
+        
+        _isReserved = false;
         Despawn();
     }
 }

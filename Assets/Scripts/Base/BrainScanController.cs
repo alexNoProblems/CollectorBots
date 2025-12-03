@@ -1,80 +1,58 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BrainScanController : MonoBehaviour
 {
     [SerializeField] private BrainScanner _scanner;
-    [SerializeField] private BrainDispatcher _brains;
     [SerializeField] private ZombieDispatcher _zombies;
-    [SerializeField] private BrainSpawner _brainSpawner;
-    [SerializeField] private ZombieSpawner _zombieSpawner;
-    [SerializeField] private bool _spawnZombiesOnAwake = true;
-
+    
     public BrainScanner Scanner => _scanner;
-    public BrainDispatcher Brains => _brains;
     public ZombieDispatcher Zombies => _zombies;
 
     private void Awake()
     {
         if (_scanner != null)
-        {
-            _scanner.Init(_brains);
             _scanner.StartAutoScan();
-        }
     }
 
     private void OnEnable()
     {
-        if (_brainSpawner != null)
-            _brainSpawner.Spawned += OnBrainSpawned;
-        
         if (_scanner != null)
-            _scanner.Scanned += OnScanned;
+            _scanner.BrainsScanned += OnBrainsScanned;
     }
 
     private void OnDisable()
     {
-        if (_brainSpawner != null)
-            _brainSpawner.Spawned -= OnBrainSpawned;
-
         if (_scanner != null)
-            _scanner.Scanned -= OnScanned;
+            _scanner.BrainsScanned -= OnBrainsScanned;
     }
-
-    public void ForceInitAfterConstruction()
+    
+    private void OnBrainsScanned(IReadOnlyList<Brain> brains)
     {
-        if (_scanner != null)
-        {
-            _scanner.Init(_brains);
-            _scanner.StartAutoScan();
-        }
-    }
-
-    private void OnBrainSpawned(Brain brain)
-    {
-        if (brain == null || _brains == null)
-            return;
-
-        _brains.Register(brain);
-    }
-
-    private void OnScanned(float _radius, Vector3 position)
-    {
-        if (_brains == null || _zombies == null)
+        if (_zombies == null || brains == null)
             return;
         
-        while (enabled)
+        for (int i = 0; i < brains.Count; i++)
         {
-            Brain brain = _brains.FindFirstFreeBrain();
+            Brain brain = brains[i];
+            
+            if (brain == null)
+                continue;
+
+            if (!brain.TryReserve())
+                continue;
+
             Zombie zombie = _zombies.FindAnyFreeZombie();
 
-            if (brain == null || zombie == null)
-                break;
-
-            if (_brains.TryClaim(brain, zombie))
+            if (zombie == null)
             {
-                _zombies.MarkBusyZombie(zombie);
-                zombie.SetTarget(brain.transform);
+                brain.CleanReservation();
+                
+                break;
             }
+            
+            _zombies.MarkBusyZombie(zombie);
+            zombie.SetTarget(brain.transform);
         }
     }
 }

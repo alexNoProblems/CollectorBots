@@ -547,10 +547,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c3904a8fcaf4442b3b54a6793417cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _storage: {fileID: 1887587723002430713}
-  _zombieSpawner: {fileID: -7516869331430757713}
-  _expansionHandler: {fileID: 7017380310683677221}
-  _zombieDispatcher: {fileID: 8176392447285812610}
   _neededBrainsToSpawnZombie: 3
   _minZombiesForExpansion: 1
   _spawnDelay: 5
@@ -625,9 +621,7 @@ MonoBehaviour:
     m_Bits: 8
   _triggerInteraction: 1
   _scanInterval: 6
-  _fogPrefab: {fileID: 1796471199757745048, guid: 4eda87423c6d34775a24522f439b4a08, type: 3}
-  _fogDuration: 2
-  _isAutoScanEnable: 0
+  _isAutoScanEnable: 1
 --- !u!114 &2340101544069894059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,11 +649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scanner: {fileID: 1659749759481257274}
-  _brains: {fileID: 6456380338612302110}
   _zombies: {fileID: 8176392447285812610}
-  _brainSpawner: {fileID: 4380356183248182846}
-  _zombieSpawner: {fileID: -7516869331430757713}
-  _spawnZombiesOnAwake: 0
 --- !u!114 &8176392447285812610
 MonoBehaviour:
   m_ObjectHideFlags: 0

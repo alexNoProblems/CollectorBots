@@ -20,15 +20,16 @@ public class BaseRoot : MonoBehaviour
     public BrainScanController ScanController => _scanController;
     public AdditionalZombieSpawner AdditionalSpawner => _additionalSpawner;
 
-    public void InjectDependencies(BaseConstructor constructor, FlagPlacer flagPlacer)
+    public void Initialize(BaseConstructor constructor, FlagPlacer flagPlacer, PrefabPool<Zombie> zombiePool,
+        int zombiesOnStart)
     {
         if (_expansion != null)
             _expansion.Init(constructor, flagPlacer);
         
         if (_spawner != null)
         {
-            var basePoint = _base != null && _base.BasePoint != null ? _base.BasePoint : (_base != null ? _base.transform : transform);
-
+            Transform basePoint = _base != null && _base.BasePoint != null ? _base.BasePoint : (_base != null ? _base.transform : transform);
+            
             _spawner.Init(
                 dispatcher: _dispatcher,
                 scanner: _scanner,
@@ -38,7 +39,17 @@ public class BaseRoot : MonoBehaviour
                 basePoint: basePoint);
         }
 
+        if (zombiePool != null)
+            _spawner.SetPool(zombiePool);
+
+        if (zombiesOnStart > 0)
+            _spawner.SpawnInitial(zombiesOnStart);
+
         if (_additionalSpawner != null)
-            _additionalSpawner?.Init(_storage, _spawner, _expansion, _dispatcher);
+            _additionalSpawner.Init(_storage, _spawner, _expansion, _dispatcher);
+    }
+    public void InjectDependencies(BaseConstructor constructor, FlagPlacer flagPlacer)
+    {
+        Initialize(constructor, flagPlacer, null, 0);
     }
 }

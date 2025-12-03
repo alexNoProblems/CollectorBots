@@ -84,8 +84,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         _pickUpper.BindCarryAnchor(_carryAnchor);
         _carriedBrain = null;
         ClearTarget();
-
-        _scanner?.Dispatcher.UnclaimBrainByZombie(this);
     }
 
     public void MakeDependencies(ZombieDispatcher dispatcher, BrainStorage storage, Transform basePosition)
@@ -146,7 +144,6 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
 
     public void GoToConstructionNewBase(Vector3 targetPosition, Action<Zombie> onArrived)
     {
-        _scanner?.Dispatcher.UnclaimBrainByZombie(this);
         ClearTarget();
         _carriedBrain = null;
         SetIdle();
