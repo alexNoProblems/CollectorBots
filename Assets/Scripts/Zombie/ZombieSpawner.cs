@@ -63,6 +63,7 @@ public class ZombieSpawner : OriginSpawner<Zombie>
     public Zombie SpawnOne(bool isConsumeBrains, bool isExpansionBlock)
     {
         Vector3 position = GetSpawnPosition();
+        
         return SpawnInternal(position, isConsumeBrains, isExpansionBlock);
     }
 
@@ -121,34 +122,23 @@ public class ZombieSpawner : OriginSpawner<Zombie>
         
         if (isConsumeBrains && (_storage == null || !_storage.TryClean(_brainsPerZombie)))
             return null;
-        
+
         if (Pool == null)
             return null;
-        
+
         Zombie zombie = Pool.Get();
         if (zombie == null)
             return null;
         
-        var zombieGameObject = zombie.gameObject;
-
-        if (zombieGameObject.activeSelf)
-            zombieGameObject.SetActive(false);
-
-        var zombieTransform = zombie.transform;
-        zombieTransform.SetParent(null, true);
-        zombieTransform.position = position;
-
+        zombie.transform.position = position;
+        zombie.SpawnTo(position);
         zombie.MakeDependencies(
             dispatcher: _dispatcher,
-            brainCollector: _ownerBase,  
+            brainCollector: _ownerBase,
             basePosition: Base
         );
         zombie.SetScanner(_scanner);
-        zombie.SpawnTo(position);
-        zombie.FinalizeSetup();
-
-        zombieGameObject.SetActive(true);
-        zombie.Init();
+        zombie.FinalizeSetup(); 
 
         OnSpawned(zombie);
 

@@ -28,28 +28,65 @@ public class BaseRoot : MonoBehaviour
         
         if (_spawner != null)
         {
-            Transform basePoint = _base != null && _base.BasePoint != null ? _base.BasePoint : (_base != null ? _base.transform : transform);
-            
+            Transform basePoint = GetBasePoint();
+
             _spawner.Init(
                 dispatcher: _dispatcher,
                 scanner: _scanner,
                 storage: _storage,
                 ownerBase: _base,
                 flagPlacer: flagPlacer,
-                basePoint: basePoint);
+                basePoint: basePoint
+            );
+
+            if (zombiePool != null)
+                _spawner.SetPool(zombiePool);
+
+            if (zombiesOnStart > 0)
+                _spawner.SpawnInitial(zombiesOnStart);
         }
-
-        if (zombiePool != null)
-            _spawner.SetPool(zombiePool);
-
-        if (zombiesOnStart > 0)
-            _spawner.SpawnInitial(zombiesOnStart);
-
+        
         if (_additionalSpawner != null)
             _additionalSpawner.Init(_storage, _spawner, _expansion, _dispatcher);
     }
     public void InjectDependencies(BaseConstructor constructor, FlagPlacer flagPlacer)
     {
-        Initialize(constructor, flagPlacer, null, 0);
+        Initialize(
+            constructor: constructor,
+            flagPlacer: flagPlacer,
+            zombiePool: null,
+            zombiesOnStart: 0
+        );
+    }
+    
+    private void OnZombieSpawned(Zombie zombie)
+    {
+        if (zombie == null)
+            return;
+
+        Transform basePoint = GetBasePoint();
+        
+        zombie.MakeDependencies(
+            dispatcher: _dispatcher,
+            brainCollector: _base,      
+            basePosition: basePoint
+        );
+
+        zombie.SetScanner(_scanner);
+        
+        zombie.SpawnTo(zombie.transform.position);
+        zombie.FinalizeSetup();
+        zombie.Init();
+    }
+    
+    private Transform GetBasePoint()
+    {
+        if (_base != null && _base.BasePoint != null)
+            return _base.BasePoint;
+
+        if (_base != null)
+            return _base.transform;
+
+        return transform;
     }
 }

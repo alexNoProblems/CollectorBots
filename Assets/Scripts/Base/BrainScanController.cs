@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BrainScanner), typeof(ZombieDispatcher))]
 public class BrainScanController : MonoBehaviour
 {
     [SerializeField] private BrainScanner _scanner;
@@ -11,6 +12,12 @@ public class BrainScanController : MonoBehaviour
 
     private void Awake()
     {
+        if(_scanner == null)
+            _scanner = GetComponent<BrainScanner>();
+        
+        if(_zombies == null)
+            _zombies = GetComponent<ZombieDispatcher>();
+        
         if (_scanner != null)
             _scanner.StartAutoScan();
     }
@@ -41,7 +48,7 @@ public class BrainScanController : MonoBehaviour
 
             if (!brain.TryReserve())
                 continue;
-
+            
             Zombie zombie = _zombies.FindAnyFreeZombie();
 
             if (zombie == null)

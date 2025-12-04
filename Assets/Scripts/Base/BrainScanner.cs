@@ -70,6 +70,7 @@ public class BrainScanner : MonoBehaviour
         for (int i = 0; i < colliders.Length; i++)
         {
             var brain = colliders[i].GetComponent<Brain>();
+            
             if (brain != null)
                 _scanBuffer.Add(brain);
         }
