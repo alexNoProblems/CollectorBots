@@ -11,9 +11,9 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
     [SerializeField] private Transform _model;
     [SerializeField] private Transform _carryAnchor;
     [SerializeField] private float _nearestDistance = 1.5f;
-
-    private BrainStorage _storage;
+    
     private ZombieDispatcher _zombies;
+    private IBrainCollector _brainCollector;
     private BrainScanner _scanner;
     private Transform _base;
     private ZombieMover _mover;
@@ -86,10 +86,10 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         ClearTarget();
     }
 
-    public void MakeDependencies(ZombieDispatcher dispatcher, BrainStorage storage, Transform basePosition)
+    public void MakeDependencies(ZombieDispatcher dispatcher, IBrainCollector brainCollector, Transform basePosition)
     {
         _zombies = dispatcher;
-        _storage = storage;
+        _brainCollector = brainCollector;
         _base = basePosition;
     }
 
@@ -226,12 +226,8 @@ public class Zombie : MonoBehaviour, IPoolable<Zombie>
         ClearTarget();
         _zombies?.MarkFreeZombie(this);
 
-        BrainStorage storage = _storage;
-
         deliveredBrain.OnDelivered();
-
-        if (storage != null)
-            storage.AddBrain(deliveredBrain);
+        _brainCollector?.Collect(this, deliveredBrain);
     }
 
     private void ClearTarget()

@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 
-public class Base : MonoBehaviour
+[RequireComponent(typeof(BrainStorage))]
+public class Base : MonoBehaviour, IBrainCollector
 {
     [SerializeField] private Transform _baseTransform;
     [SerializeField] private BrainStorage _storage;
@@ -9,6 +11,12 @@ public class Base : MonoBehaviour
     public BrainStorage Storage => _storage;
 
     public BaseState State { get; private set; } = BaseState.Idle;
+
+    private void Awake()
+    {
+        if (_storage == null)
+            _storage = GetComponent<BrainStorage>();
+    }
 
     public void SetCollectingMode()
     {
@@ -24,5 +32,13 @@ public class Base : MonoBehaviour
     public void SetStateExpansionComplete()
     {
         State = BaseState.Idle;
+    }
+
+    public void Collect(Zombie zombie, Brain brain)
+    {
+        if (brain == null || _storage == null)
+            return;
+        
+        _storage.AddBrain(brain);
     }
 }

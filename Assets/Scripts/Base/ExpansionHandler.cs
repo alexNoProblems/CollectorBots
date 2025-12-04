@@ -41,7 +41,7 @@ public class ExpansionHandler : MonoBehaviour
         if (_flagPlacer != null)
             _flagPlacer.FlagPlaced += OnFlagPlaced;
 
-        _storage.BrainsDeliveredChanged += OnBrainChanged;
+        _storage.BrainsCountChanged += OnBrainChanged;
         _zombieDispatcher.ZombieFreed += OnZombieFreed;
     }
 
@@ -51,7 +51,7 @@ public class ExpansionHandler : MonoBehaviour
             _flagPlacer.FlagPlaced -= OnFlagPlaced;
 
         if (_storage != null)
-            _storage.BrainsDeliveredChanged -= OnBrainChanged;
+            _storage.BrainsCountChanged -= OnBrainChanged;
 
         if (_zombieDispatcher != null)
             _zombieDispatcher.ZombieFreed -= OnZombieFreed;
@@ -88,7 +88,7 @@ public class ExpansionHandler : MonoBehaviour
         if (_storage == null || _zombieDispatcher == null)
             return;
 
-        int delivered = _storage.DeliveredCount;
+        int delivered = _storage.Count;
 
         if (delivered < _brainsRequired)
             return;

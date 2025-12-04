@@ -25,7 +25,7 @@ public class AdditionalZombieSpawner : MonoBehaviour
     private void OnDisable()
     {
         if (_storage != null)
-            _storage.BrainsDeliveredChanged -= OnDeliveredChanged;
+            _storage.BrainsCountChanged -= OnDeliveredChanged;
 
         CancelCountdown();
     }
@@ -33,7 +33,7 @@ public class AdditionalZombieSpawner : MonoBehaviour
     public void Init( BrainStorage storage, ZombieSpawner spawner, ExpansionHandler expansion, ZombieDispatcher dispatcher)
     {
         if (_storage != null)
-            _storage.BrainsDeliveredChanged -= OnDeliveredChanged;
+            _storage.BrainsCountChanged -= OnDeliveredChanged;
 
         _storage = storage;
         _zombieSpawner = spawner;
@@ -41,7 +41,7 @@ public class AdditionalZombieSpawner : MonoBehaviour
         _zombieDispatcher = dispatcher;
 
         if (_storage != null)
-            _storage.BrainsDeliveredChanged += OnDeliveredChanged;
+            _storage.BrainsCountChanged += OnDeliveredChanged;
     }
 
     private bool IsBlockedByExpansion(int totalZombies)

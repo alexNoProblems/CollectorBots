@@ -3,22 +3,20 @@ using UnityEngine;
 
 public class BrainStorage : MonoBehaviour
 {
-    private int _delivered;
-
-    public event Action<int> BrainsDeliveredChanged;
-
-    public int DeliveredCount => _delivered;
+    public event Action<int> BrainsCountChanged;
+    
+    public int Count { get; private set; }
 
     public bool TryClean(int amount)
     {
         if (amount <= 0)
             return true;
         
-        if (_delivered < amount)
+        if (Count < amount)
             return false;
 
-        _delivered -= amount;
-        BrainsDeliveredChanged?.Invoke(_delivered);
+        Count -= amount;
+        BrainsCountChanged?.Invoke(Count);
 
         return true;
     }
@@ -28,16 +26,16 @@ public class BrainStorage : MonoBehaviour
         if (brain == null)
             return;
 
-        _delivered++;
-        BrainsDeliveredChanged?.Invoke(_delivered);
+        Count++;
+        BrainsCountChanged?.Invoke(Count);
     }
 
     public void ResetCount()
     {
-        if (_delivered != 0)
-        {
-            _delivered = 0;
-            BrainsDeliveredChanged?.Invoke(_delivered);
-        }
+        if (Count != 0)
+            return;
+        
+        Count= 0;
+        BrainsCountChanged?.Invoke(Count);
     }
 }

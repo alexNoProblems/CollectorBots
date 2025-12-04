@@ -138,7 +138,11 @@ public class ZombieSpawner : OriginSpawner<Zombie>
         zombieTransform.SetParent(null, true);
         zombieTransform.position = position;
 
-        zombie.MakeDependencies(_dispatcher, _storage, Base);
+        zombie.MakeDependencies(
+            dispatcher: _dispatcher,
+            brainCollector: _ownerBase,  
+            basePosition: Base
+        );
         zombie.SetScanner(_scanner);
         zombie.SpawnTo(position);
         zombie.FinalizeSetup();
@@ -175,7 +179,7 @@ public class ZombieSpawner : OriginSpawner<Zombie>
         if (_storage == null)
             return 0;
         
-        int delivered = _storage.DeliveredCount;
+        int delivered = _storage.Count;
 
         if (_expansionRequested)
         {
