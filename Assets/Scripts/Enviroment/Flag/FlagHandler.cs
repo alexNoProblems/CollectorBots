@@ -3,7 +3,7 @@ using UnityEngine;
 public class FlagHandler : MonoBehaviour
 {
     [SerializeField] private InputReader _inputReader;
-    [SerializeField] MouseClicker _clicker;
+    [SerializeField] private MouseClicker _clicker;
     [SerializeField] private FlagPlacer _flagPlacer;
    
     private void OnEnable()
